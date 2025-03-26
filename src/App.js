@@ -45,7 +45,7 @@ function App() {
     };
     fetchMovies(query);
     fetchGenres(genre);
-  }, [query, genre, API_KEY]);
+  }, [query, genre, API_KEY, category]);
 
   const updateSearch = (e) => {
     setSearch(e.target.value);
@@ -140,7 +140,7 @@ function App() {
             <Col xs="12" md="6" lg="4" key={item.id}>
               <Movie
                 key={item.id}
-                title={item.title}
+                title={category === 'movie' ? item.title : item.name}
                 year={item.release_date}
                 image={item.poster_path}
                 description={item.overview}

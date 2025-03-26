@@ -27,11 +27,11 @@ function Movie({ title, year, image, description, className }) {
       <Button color="danger" onClick={toggle} className="description-button">
         Description
       </Button>
-      <Modal isOpen={modal} toggle={toggle} className={className}>
+      <Modal isOpen={modal} toggle={toggle} className={className} centered>
         <ModalHeader color="danger" toggle={toggle}>
-          {title}
+          {title ? title : 'Title not available :('}
         </ModalHeader>
-        <ModalBody>{description}</ModalBody>
+        <ModalBody>{description ? description : 'Description not available :('}</ModalBody>
       </Modal>
     </div>
   );
