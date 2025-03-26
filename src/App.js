@@ -2,67 +2,95 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 import Movie from "./Movie";
 import { Container, Row, Col } from "reactstrap";
-import Logo from './logo.svg'
+import Logo from "./logo.svg";
 
 function App() {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [genre, setGenre] = useState("");
+  const [activeBtn, setActiveBtn] = useState("movies");
+  const [category, setCategory] = useState("movie");
 
   const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
   useEffect(() => {
-    async function fetchMovies(queryValue) {
+    const fetchMovies = async (queryValue) => {
       if (!queryValue) {
         return;
       }
       const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&page=1&include_adult=false&query=${query}`
+        `https://api.themoviedb.org/3/search/${category}?api_key=${API_KEY}&page=1&include_adult=false&query=${query}`
       );
       const data = await response.json();
       const moviesWithOnlyPosters =
         data.results &&
-        data.results.filter(item => (item.poster_path != null ? item : null));
+        data.results.filter((item) => (item.poster_path != null ? item : null));
       setMovies(moviesWithOnlyPosters);
-    }
+    };
 
-    async function fetchGenres(genreValue) {
+    const fetchGenres = async (genreValue) => {
       if (!genreValue) {
         return;
       }
       const response = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genre}`
+        `https://api.themoviedb.org/3/discover/${category}?api_key=${API_KEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genre}`
       );
       const data = await response.json();
       console.log(data);
       const moviesWithOnlyPosters =
         data.results &&
-        data.results.filter(item => (item.poster_path != null ? item : null));
+        data.results.filter((item) => (item.poster_path != null ? item : null));
       setMovies(moviesWithOnlyPosters);
-    }
+    };
     fetchMovies(query);
     fetchGenres(genre);
   }, [query, genre, API_KEY]);
 
-  function updateSearch(e) {
+  const updateSearch = (e) => {
     setSearch(e.target.value);
-  }
+  };
 
-  function getQuery(e) {
+  const submitQuery = (e) => {
     e.preventDefault();
     setQuery(search);
     setSearch("");
-  }
+    console.log("query:", query, "search:", search);
+  };
 
-  function handleGenreChange(e) {
+  const handleGenreChange = (e) => {
     setGenre(e.target.value);
-  }
+  };
+
+  const handleBtnClick = (buttonName) => {
+    setActiveBtn(buttonName);
+    buttonName === "movies" ? setCategory("movie") : setCategory("tv");
+  };
 
   return (
     <div className="App">
       <h1 className="app-title">What 2 Watch</h1>
-      <form onSubmit={getQuery}>
+      <div className="movie-tv-shows-btns">
+        <button
+          type="button"
+          className={`btn ${
+            activeBtn === "movies" ? "btn-danger" : "btn-secondary"
+          }`}
+          onClick={() => handleBtnClick("movies")}
+        >
+          Movies
+        </button>
+        <button
+          type="button"
+          className={`btn ${
+            activeBtn === "tvShows" ? "btn-danger" : "btn-secondary"
+          } ms-3`}
+          onClick={() => handleBtnClick("tvShows")}
+        >
+          Tv Shows
+        </button>
+      </div>
+      <form onSubmit={submitQuery}>
         <Container fluid={true}>
           <Row>
             <Col xs="12" sm="6" className="search-bar-col">
@@ -108,7 +136,7 @@ function App() {
 
       <Row>
         {movies &&
-          movies.map(item => (
+          movies.map((item) => (
             <Col xs="12" md="6" lg="4" key={item.id}>
               <Movie
                 key={item.id}
@@ -122,7 +150,18 @@ function App() {
       </Row>
 
       <footer>
-        <p> Powered by <a href="https://www.themoviedb.org/?language=en-US" target="_blank" rel="noopener noreferrer"> <img src={Logo} alt="Powered By The Movie Database" /></a></p>
+        <p>
+          {" "}
+          Powered by{" "}
+          <a
+            href="https://www.themoviedb.org/?language=en-US"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {" "}
+            <img src={Logo} alt="Powered By The Movie Database" />
+          </a>
+        </p>
       </footer>
     </div>
   );

@@ -27,8 +27,12 @@ body {
 .app-title {
   color: #ff2a39;
   margin-top: 1.5em;
-  margin-bottom: 1.75em;
+  margin-bottom: 1rem;
   font-size: 3em;
+}
+
+.movie-tv-shows-btns { 
+  margin-bottom: 2rem;
 }
 
 .search-bar {
@@ -68,7 +72,7 @@ img {
 }
 
 .description-button {
-  margin-bottom: 11em;
+  margin-bottom: 8em;
   background-color: #ff1531;
   border: none;
   padding: 0.6em;
