@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from "react";
-import "./styles.css";
-import Movie from "./Movie";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import "../styles/styles.css";
+import Movie from "../components/Movie.tsx";
 import { Container, Row, Col } from "reactstrap";
-import Logo from "./logo.svg";
+//@ts-ignore
+import Logo from "../assets/logo.svg";
+import { MovieData } from "../types/types.ts";
+import { onlyResultsWithPosters } from "../utils/filterShowsMovies.ts";
 
 function App() {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<MovieData[]>([]);
   const [genre, setGenre] = useState("");
-  const [activeBtn, setActiveBtn] = useState("movies");
-  const [category, setCategory] = useState("movie");
+  const [activeBtn, setActiveBtn] = useState<"movies" | "tvShows">("movies");
+  const [category, setCategory] = useState<"movie" | "tv">("movie");
 
   const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
   useEffect(() => {
-    const fetchMovies = async (queryValue) => {
+    const fetchMovies = async (queryValue: string) => {
       if (!queryValue) {
         return;
       }
@@ -23,13 +26,11 @@ function App() {
         `https://api.themoviedb.org/3/search/${category}?api_key=${API_KEY}&page=1&include_adult=false&query=${query}`
       );
       const data = await response.json();
-      const moviesWithOnlyPosters =
-        data.results &&
-        data.results.filter((item) => (item.poster_path != null ? item : null));
-      setMovies(moviesWithOnlyPosters);
+      const returnedMoviesShows = onlyResultsWithPosters(data?.results);
+      setMovies(returnedMoviesShows);
     };
 
-    const fetchGenres = async (genreValue) => {
+    const fetchGenres = async (genreValue: string) => {
       if (!genreValue) {
         return;
       }
@@ -37,32 +38,30 @@ function App() {
         `https://api.themoviedb.org/3/discover/${category}?api_key=${API_KEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genre}`
       );
       const data = await response.json();
-      console.log(data);
-      const moviesWithOnlyPosters =
-        data.results &&
-        data.results.filter((item) => (item.poster_path != null ? item : null));
-      setMovies(moviesWithOnlyPosters);
+      const returnedMoviesShows = onlyResultsWithPosters(data?.results);
+      setMovies(returnedMoviesShows);
     };
     fetchMovies(query);
     fetchGenres(genre);
   }, [query, genre, API_KEY, category]);
 
-  const updateSearch = (e) => {
+  const updateSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
+    setGenre("");
+    setQuery("");
   };
 
-  const submitQuery = (e) => {
+  const submitQuery = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setQuery(search);
     setSearch("");
-    console.log("query:", query, "search:", search);
   };
 
-  const handleGenreChange = (e) => {
+  const handleGenreChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setGenre(e.target.value);
   };
 
-  const handleBtnClick = (buttonName) => {
+  const handleBtnClick = (buttonName: "movies" | "tvShows") => {
     setActiveBtn(buttonName);
     buttonName === "movies" ? setCategory("movie") : setCategory("tv");
   };
@@ -139,9 +138,10 @@ function App() {
           movies.map((item) => (
             <Col xs="12" md="6" lg="4" key={item.id}>
               <Movie
-                key={item.id}
-                title={category === 'movie' ? item.title : item.name}
-                year={item.release_date}
+                title={category === "movie" ? item.title : item.name}
+                year={
+                  category === "movie" ? item.release_date : item.first_air_date
+                }
                 image={item.poster_path}
                 description={item.overview}
               />

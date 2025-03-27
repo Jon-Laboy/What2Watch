@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // Import from 'react-dom/client'
-import App from './App';
+import App from './pages/App.tsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Create a root element to render the app
