@@ -112,7 +112,7 @@ function App() {
       <h1
         className="app-title"
         style={{ cursor: "pointer" }}
-        onClick={() => (window.location.href = "/")}
+        onClick={() => (window.location.href = "/What2Watch/")}
       >
         What 2 Watch
       </h1>
