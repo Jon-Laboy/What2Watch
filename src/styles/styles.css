@@ -96,6 +96,13 @@ footer img {
   min-height: 100vh;
 }
 
+.feedback-message {
+  color: red;
+  font-size: 2.5rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
 @media (max-width: 576px) {
   .search-bar-col {
     text-align: center;
