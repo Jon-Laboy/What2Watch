@@ -14,6 +14,7 @@ function App() {
   const [genre, setGenre] = useState("");
   const [activeBtn, setActiveBtn] = useState<"movies" | "tvShows">("movies");
   const [category, setCategory] = useState<"movie" | "tv">("movie");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   const API_KEY = process.env.REACT_APP_MOVIE_API_KEY;
 
@@ -22,24 +23,64 @@ function App() {
       if (!queryValue) {
         return;
       }
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/${category}?api_key=${API_KEY}&page=1&include_adult=false&query=${query}`
-      );
-      const data = await response.json();
-      const returnedMoviesShows = onlyResultsWithPosters(data?.results);
-      setMovies(returnedMoviesShows);
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/search/${category}?api_key=${API_KEY}&page=1&include_adult=false&query=${query}`
+        );
+
+        if (!response.ok) {
+          setFeedbackMessage(
+            "Unable to fetch results. Please try again later."
+          );
+          return;
+        }
+
+        const data = await response.json();
+        const returnedMoviesShows = onlyResultsWithPosters(data?.results);
+
+        if (returnedMoviesShows.length === 0) {
+          setFeedbackMessage("No results found :(");
+        } else {
+          setFeedbackMessage("");
+        }
+        setMovies(returnedMoviesShows);
+      } catch (err) {
+        console.error(err);
+        setFeedbackMessage("Something went wrong. Please try again later.");
+      }
     };
 
     const fetchGenres = async (genreValue: string) => {
       if (!genreValue) {
         return;
       }
-      const response = await fetch(
-        `https://api.themoviedb.org/3/discover/${category}?api_key=${API_KEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genre}`
-      );
-      const data = await response.json();
-      const returnedMoviesShows = onlyResultsWithPosters(data?.results);
-      setMovies(returnedMoviesShows);
+
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/discover/${category}?api_key=${API_KEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genreValue}`
+        );
+
+        if (!response.ok) {
+          setFeedbackMessage(
+            "Unable to fetch genre results. Please try again later."
+          );
+          return;
+        }
+
+        const data = await response.json();
+        const returnedMoviesShows = onlyResultsWithPosters(data?.results);
+
+        if (returnedMoviesShows.length === 0) {
+          setFeedbackMessage("No movies or shows found for that genre :(");
+        } else {
+          setFeedbackMessage("");
+        }
+
+        setMovies(returnedMoviesShows);
+      } catch (err) {
+        console.error(err);
+        setFeedbackMessage("Something went wrong while fetching genres.");
+      }
     };
     fetchMovies(query);
     fetchGenres(genre);
@@ -68,7 +109,13 @@ function App() {
 
   return (
     <div className="App">
-      <h1 className="app-title">What 2 Watch</h1>
+      <h1
+        className="app-title"
+        style={{ cursor: "pointer" }}
+        onClick={() => (window.location.href = "/")}
+      >
+        What 2 Watch
+      </h1>
       <div className="movie-tv-shows-btns">
         <button
           type="button"
@@ -134,6 +181,11 @@ function App() {
       </form>
 
       <Row>
+        {feedbackMessage && (
+          <div className="feedback-message">
+            <p>{feedbackMessage}</p>
+          </div>
+        )}
         {movies &&
           movies.map((item) => (
             <Col xs="12" md="6" lg="4" key={item.id}>
