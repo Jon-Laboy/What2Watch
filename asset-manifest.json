@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/What2Watch/static/css/main.6c85a5af.css",
-    "main.js": "/What2Watch/static/js/main.d7865782.js",
+    "main.js": "/What2Watch/static/js/main.95e1aeea.js",
     "static/media/logo.svg": "/What2Watch/static/media/logo.caee745762db3e030d38ebb5a167ae05.svg",
     "index.html": "/What2Watch/index.html",
     "main.6c85a5af.css.map": "/What2Watch/static/css/main.6c85a5af.css.map",
-    "main.d7865782.js.map": "/What2Watch/static/js/main.d7865782.js.map"
+    "main.95e1aeea.js.map": "/What2Watch/static/js/main.95e1aeea.js.map"
   },
   "entrypoints": [
     "static/css/main.6c85a5af.css",
-    "static/js/main.d7865782.js"
+    "static/js/main.95e1aeea.js"
   ]
 }
